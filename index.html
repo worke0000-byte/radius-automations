@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mathnasium 数据看板 (演示版)</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f4f7f6; padding: 20px; }
+        .dashboard { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1 { color: #333; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #ddd; }
+        th { background-color: #f8f9fa; color: #555; font-weight: bold; }
+        .badge-ft { background: #e3f2fd; color: #1976d2; padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: bold; }
+        .badge-asmt { background: #fff3e0; color: #e65100; padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: bold; }
+        .demo-notice { background-color: #ffebee; color: #c62828; padding: 10px; border-radius: 5px; margin-bottom: 15px; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+<div class="dashboard">
+    <div class="demo-notice">⚠️ 当前为离线演示模式，使用的是模拟数据，未连接真实数据库。</div>
+    <h1>📊 最新试听与测评线索</h1>
+    <p id="updateTime" style="color: #666; font-size: 14px;"></p>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>客户姓名</th>
+                <th>预约类型</th>
+                <th>校区</th>
+                <th>时间</th>
+            </tr>
+        </thead>
+        <tbody id="dataTable">
+            </tbody>
+    </table>
+</div>
+
+<script>
+    // 💡 这里就是我们的 "Mock Data" (假数据)
+    // 我们模拟了刚才那个机器人从系统里抓出来的格式
+    const mockData = {
+        lastUpdated: new Date().toLocaleString(),
+        eventCount: 4,
+        events: [
+            { contact: "张伟 (Wei Zhang)", subject: "[FT] 免费试听", center: "Clover Z 旗舰校区", dueDate: "今天 下午 2:30" },
+            { contact: "李娜 (Na Li)", subject: "[ASMNT] 入学测评", center: "MAJA 社区店", dueDate: "今天 下午 4:00" },
+            { contact: "王芳 (Fang Wang)", subject: "[FT] 免费试听", center: "Clover Z 旗舰校区", dueDate: "明天 上午 10:00" },
+            { contact: "Kevin Smith", subject: "{ASMT} 阶段测评", center: "MAJA 社区店", dueDate: "明天 下午 1:15" }
+        ]
+    };
+
+    // 把假数据渲染到网页上的函数
+    function renderData() {
+        const tableBody = document.getElementById("dataTable");
+        const updateTimeText = document.getElementById("updateTime");
+
+        // 显示时间和总数
+        updateTimeText.innerHTML = `上次同步时间：<b>${mockData.lastUpdated}</b> (共抓取到 ${mockData.eventCount} 条高意向线索)`;
+
+        // 清空表格
+        tableBody.innerHTML = "";
+
+        // 循环把数据画成表格行
+        mockData.events.forEach(event => {
+            // 给不同的类型加上不同颜色的标签
+            let badgeClass = "badge-ft";
+            if(event.subject.includes("ASMT") || event.subject.includes("ASMNT")) {
+                badgeClass = "badge-asmt";
+            }
+
+            const row = `<tr>
+                <td><strong>${event.contact}</strong></td>
+                <td><span class="${badgeClass}">${event.subject}</span></td>
+                <td>${event.center}</td>
+                <td>${event.dueDate}</td>
+            </tr>`;
+            tableBody.innerHTML += row;
+        });
+    }
+
+    // 网页加载时立刻运行渲染函数
+    renderData();
+</script>
+
+</body>
+</html>
